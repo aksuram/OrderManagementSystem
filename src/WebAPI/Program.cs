@@ -1,5 +1,6 @@
+using OrderManagementSystem.Infrastructure;
 
-namespace WebAPI
+namespace OrderManagementSystem.WebAPI
 {
     public class Program
     {
@@ -8,6 +9,8 @@ namespace WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,9 +27,6 @@ namespace WebAPI
             }
 
             app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
 
             app.MapControllers();
 
