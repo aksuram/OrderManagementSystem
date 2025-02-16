@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OrderManagementSystem.Application.Common.Interfaces;
 using OrderManagementSystem.Domain.Entities;
 using System.Reflection;
@@ -24,12 +25,15 @@ namespace OrderManagementSystem.Infrastructure.Persistence
         //      "dotnet ef database update --project src\Infrastructure --startup-project src\WebApi"
 
         public required DbSet<Product> Products { get; set; }
+        public required DbSet<Discount> Discounts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+#if DEBUG
             //Uncomment for a better debugging experience
             optionsBuilder.EnableSensitiveDataLogging();
             optionsBuilder.LogTo(Console.WriteLine);
+#endif
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
