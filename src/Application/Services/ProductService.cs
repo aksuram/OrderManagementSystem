@@ -1,6 +1,8 @@
-﻿using OrderManagementSystem.Application.Common.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderManagementSystem.Application.Common.Interfaces;
 using OrderManagementSystem.Application.Common.Mappings;
 using OrderManagementSystem.Application.Common.Models;
+using OrderManagementSystem.Application.Common.Querying;
 using OrderManagementSystem.Application.Models.Products;
 using OrderManagementSystem.Application.Services.Interfaces;
 using OrderManagementSystem.Application.Validators.Products;
@@ -38,6 +40,33 @@ namespace OrderManagementSystem.Application.Services
             await _applicationDbContext.SaveChangesAsync();
 
             return Result<ProductVm>.Success(product.ToProductVm());
+        }
+
+        public async Task<Result<PaginatedList<ProductVm>>> GetProducts(ProductListDto productListDto)
+        {
+            ProductListDtoValidator validator = new ProductListDtoValidator();
+            var validationResult = validator.Validate(productListDto);
+
+            if (!validationResult.IsValid)
+            {
+                return Result<PaginatedList<ProductVm>>.BadData(validationResult.Errors.Select(x =>
+                    new FieldError(x.PropertyName, x.ErrorMessage)));
+            }
+
+            var products = await _applicationDbContext.Products
+                .AsNoTracking()
+                .WhereIf(productListDto.Search != null && productListDto.Search != "",
+                            x => x.Name.Contains(productListDto.Search!))
+                .OrderBy(x => x.Id)
+                .Select(x => new ProductVm { Id = x.Id, Name = x.Name, Price = x.Price })
+                .PaginatedListAsync(productListDto.PageNumber, productListDto.PageSize);
+
+            if (products.Items.Count == 0)
+            {
+                return Result<PaginatedList<ProductVm>>.NotFound("pageNumber", "Could not find any products");
+            }
+
+            return Result<PaginatedList<ProductVm>>.Success(products);
         }
     }
 }

@@ -27,14 +27,14 @@ namespace OrderManagementSystem.Application.Common.Models
             Items = items;
         }
 
-        public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> query, int pageIndex, int pageSize, CancellationToken cancellationToken)
+        public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> query, int pageIndex, int pageSize)
         {
-            var itemCount = await query.CountAsync(cancellationToken);
+            var itemCount = await query.CountAsync();
 
             var items = await query
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync(cancellationToken);
+                .ToListAsync();
 
             return new PaginatedList<T>(items, itemCount, pageIndex, pageSize);
         }
