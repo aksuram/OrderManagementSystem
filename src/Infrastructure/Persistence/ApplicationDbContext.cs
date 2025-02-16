@@ -26,6 +26,8 @@ namespace OrderManagementSystem.Infrastructure.Persistence
 
         public required DbSet<Product> Products { get; set; }
         public required DbSet<Discount> Discounts { get; set; }
+        public required DbSet<Order> Orders { get; set; }
+        public required DbSet<OrderProduct> OrderProducts { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
