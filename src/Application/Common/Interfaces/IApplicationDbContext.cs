@@ -1,10 +1,14 @@
-﻿namespace OrderManagementSystem.Application.Common.Interfaces
+﻿using Microsoft.EntityFrameworkCore;
+using OrderManagementSystem.Domain.Entities;
+
+namespace OrderManagementSystem.Application.Common.Interfaces
 {
     public interface IApplicationDbContext
     {
-        //DbSet<Entity> Entities { get; set; }
+        DbSet<Product> Products { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        Task<int> SaveChangesAsync();
         int SaveChanges();
     }
 }
